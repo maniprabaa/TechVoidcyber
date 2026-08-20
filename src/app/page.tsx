@@ -1,101 +1,191 @@
-import Image from "next/image";
+import type { ArticleCard } from '@/lib/api';
+import { serverGet } from '@/lib/api';
+import { ArticleCardView, BreakingBadge, SectionHeader } from '@/components/ArticleCard';
+import { NewsletterForm } from '@/components/NewsletterForm';
+import Link from 'next/link';
+import { isDisplayableArticleImage, relativeTime } from '@/lib/utils';
 
-export default function Home() {
+export const revalidate = 60;
+
+interface HomePayload {
+  breaking: ArticleCard[];
+  topStories: ArticleCard[];
+  latest: ArticleCard[];
+  critical: ArticleCard[];
+  breaches: ArticleCard[];
+  malware: ArticleCard[];
+  research: ArticleCard[];
+  threatIntel: ArticleCard[];
+}
+
+async function loadHome(): Promise<HomePayload | null> {
+  try {
+    return await serverGet<HomePayload>('/home', 60);
+  } catch {
+    return null;
+  }
+}
+
+export default async function HomePage() {
+  const data = await loadHome();
+  const breaking = data?.breaking ?? [];
+  const latest = data?.latest ?? [];
+  const critical = data?.critical ?? [];
+  const top = data?.topStories ?? [];
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div>
+      <section className="relative overflow-hidden border-b border-[var(--border)]">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(59,130,246,0.16),transparent_40%),radial-gradient(circle_at_80%_0%,rgba(29,78,216,0.12),transparent_35%)]" />
+        <div className="container-editorial relative grid gap-10 py-16 md:grid-cols-[1.1fr_0.9fr] md:py-24">
+          <div className="animate-fadeUp">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.22em] text-accent">
+              Cybersecurity Intelligence
+            </p>
+            <h1 className="mt-4 max-w-xl font-display text-4xl leading-[1.08] tracking-tight text-ink-900 dark:text-white md:text-6xl">
+              What happened in cybersecurity today.
+            </h1>
+            <p className="mt-5 max-w-lg text-base leading-7 text-ink-400 md:text-lg">
+              The latest attacks, vulnerabilities, breaches, malware campaigns, and security
+              research — source-driven and editorially reviewed.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link
+                href="/news"
+                className="rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-white hover:bg-accent-deep"
+              >
+                Read latest
+              </Link>
+              <Link
+                href="/cve"
+                className="rounded-lg border border-[var(--border)] px-5 py-2.5 text-sm hover:border-accent/40"
+              >
+                Browse CVEs
+              </Link>
+            </div>
+          </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          <div className="panel animate-fadeUp p-5 md:p-6" style={{ animationDelay: '120ms' }}>
+            <div className="mb-4 flex items-center justify-between">
+              <BreakingBadge />
+              <span className="text-xs text-ink-400">Live desk</span>
+            </div>
+            {breaking.length === 0 ? (
+              <p className="text-sm text-ink-400">No breaking alerts right now. Check latest news.</p>
+            ) : (
+              <ul className="space-y-4">
+                {breaking.slice(0, 4).map((item) => (
+                  <li key={item._id} className="border-b border-[var(--border)] pb-4 last:border-0 last:pb-0">
+                    <Link href={`/news/${item.slug}`} className="flex gap-3">
+                      {item.featuredImage && isDisplayableArticleImage(item.featuredImage) ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={item.featuredImage}
+                          alt=""
+                          className="h-14 w-20 shrink-0 object-cover"
+                          referrerPolicy="no-referrer"
+                        />
+                      ) : null}
+                      <span className="min-w-0">
+                        <p className="font-medium leading-snug text-ink-900 dark:text-white">
+                          {item.title}
+                        </p>
+                        <p className="mt-1 text-xs text-ink-400">{relativeTime(item.publishedAt)}</p>
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+      </section>
+
+      <div className="container-editorial space-y-16 py-12 md:py-16">
+        <section>
+          <SectionHeader title="Top Stories" eyebrow="Priority" href="/news" />
+          <div className="grid gap-4 md:grid-cols-2">
+            {(top.length ? top : latest).slice(0, 1).map((a) => (
+              <ArticleCardView key={a._id} article={a} featured />
+            ))}
+            <div className="grid gap-4">
+              {(top.length ? top : latest).slice(1, 4).map((a) => (
+                <ArticleCardView key={a._id} article={a} />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <SectionHeader title="Latest Security News" eyebrow="Current affairs" href="/news" />
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {latest.slice(0, 6).map((a) => (
+              <ArticleCardView key={a._id} article={a} />
+            ))}
+            {!latest.length && (
+              <div className="panel col-span-full p-8 text-sm text-ink-400">
+                No published articles yet. Start the backend, seed sources, and run discovery.
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section>
+          <SectionHeader
+            title="Critical Vulnerabilities"
+            eyebrow="Severity"
+            href="/news?filter=vulnerabilities"
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {critical.slice(0, 6).map((a) => (
+              <ArticleCardView key={a._id} article={a} />
+            ))}
+            {!critical.length && (
+              <p className="text-sm text-ink-400">No critical vulnerability stories published yet.</p>
+            )}
+          </div>
+        </section>
+
+        <div className="grid gap-10 lg:grid-cols-2">
+          <section>
+            <SectionHeader title="Threat Intelligence" href="/news?filter=threats" />
+            <div className="space-y-4">
+              {(data?.threatIntel ?? []).slice(0, 4).map((a) => (
+                <ArticleCardView key={a._id} article={a} />
+              ))}
+            </div>
+          </section>
+          <section>
+            <SectionHeader title="Data Breaches" href="/news?filter=breaches" />
+            <div className="space-y-4">
+              {(data?.breaches ?? []).slice(0, 4).map((a) => (
+                <ArticleCardView key={a._id} article={a} />
+              ))}
+            </div>
+          </section>
+        </div>
+
+        <div className="grid gap-10 lg:grid-cols-2">
+          <section>
+            <SectionHeader title="Malware Watch" href="/news?filter=malware" />
+            <div className="space-y-4">
+              {(data?.malware ?? []).slice(0, 4).map((a) => (
+                <ArticleCardView key={a._id} article={a} />
+              ))}
+            </div>
+          </section>
+          <section>
+            <SectionHeader title="Security Research" href="/news?filter=research" />
+            <div className="space-y-4">
+              {(data?.research ?? []).slice(0, 4).map((a) => (
+                <ArticleCardView key={a._id} article={a} />
+              ))}
+            </div>
+          </section>
+        </div>
+
+        <NewsletterForm />
+      </div>
     </div>
   );
 }

@@ -3,19 +3,72 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f6f7f9;
+  --foreground: #101113;
+  --panel: #ffffff;
+  --border: #e5e7eb;
+  --muted: #6b7280;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --background: #08090a;
+  --foreground: #e8eaed;
+  --panel: #101113;
+  --border: #1e2126;
+  --muted: #9ca3af;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+.dark body {
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59, 130, 246, 0.12), transparent),
+    linear-gradient(180deg, #08090a 0%, #0c0d10 100%);
+}
+
+::selection {
+  background: rgba(59, 130, 246, 0.35);
+}
+
+@layer components {
+  .container-editorial {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .panel {
+    @apply rounded-xl border border-[var(--border)] bg-[var(--panel)];
+  }
+
+  .prose-article {
+    @apply max-w-none text-[1.05rem] leading-8 text-ink-700 dark:text-ink-200;
+  }
+
+  .prose-article h2 {
+    @apply mb-3 mt-10 font-display text-2xl font-semibold tracking-tight text-ink-900 dark:text-white;
+  }
+
+  .prose-article h3 {
+    @apply mb-2 mt-8 text-xl font-semibold text-ink-900 dark:text-white;
+  }
+
+  .prose-article p {
+    @apply mb-5;
+  }
+
+  .prose-article ul {
+    @apply mb-5 list-disc space-y-2 pl-6;
+  }
+
+  .prose-article a {
+    @apply text-accent underline-offset-2 hover:underline;
+  }
 }

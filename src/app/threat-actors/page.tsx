@@ -26,13 +26,13 @@ export default async function ThreatActorsPage() {
   }
 
   return (
-    <div className="container-editorial py-10 md:py-14">
+    <div className="pb-16 pt-6">
       <h1 className="font-display text-4xl text-ink-900 dark:text-white">Threat Actors</h1>
       <p className="mt-2 max-w-2xl text-ink-400">
         Attribution is labeled as confirmed, reported, suspected, or disputed. Speculation is not
         presented as fact.
       </p>
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-8 grid gap-4 sm:grid-cols-2">
         {items.map((a) => (
           <Link key={a._id} href={`/threat-actors/${a.slug}`} className="panel p-5 hover:border-accent/40">
             <h2 className="font-display text-xl text-ink-900 dark:text-white">{a.name}</h2>

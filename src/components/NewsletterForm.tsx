@@ -2,8 +2,9 @@
 
 import { FormEvent, useState } from 'react';
 import { api } from '@/lib/api';
+import { cn } from '@/lib/utils';
 
-export function NewsletterForm() {
+export function NewsletterForm({ compact = false }: { compact?: boolean }) {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
   const [message, setMessage] = useState('');
@@ -22,8 +23,43 @@ export function NewsletterForm() {
     }
   }
 
+  if (compact) {
+    return (
+      <section>
+        <h2 className="text-[16px] font-semibold text-ink-900 dark:text-white">
+          Cybersecurity Brief
+        </h2>
+        <p className="mt-2 text-[13px] leading-5 text-ink-400">
+          A curated digest of attacks, vulnerabilities, and research — no generic tech noise.
+        </p>
+        <form onSubmit={onSubmit} className="mt-4 space-y-2">
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your email"
+            className="h-10 w-full rounded-full border border-[var(--border)] bg-transparent px-4 text-sm outline-none focus:border-ink-900 dark:focus:border-white"
+          />
+          <button
+            type="submit"
+            disabled={status === 'loading'}
+            className="h-10 w-full rounded-full bg-ink-900 text-sm font-medium text-white transition hover:bg-ink-800 disabled:opacity-60 dark:bg-white dark:text-ink-900"
+          >
+            {status === 'loading' ? 'Subscribing…' : 'Subscribe'}
+          </button>
+          {message && (
+            <p className={cn('text-xs', status === 'error' ? 'text-critical' : 'text-ink-400')}>
+              {message}
+            </p>
+          )}
+        </form>
+      </section>
+    );
+  }
+
   return (
-    <section className="panel overflow-hidden">
+    <section className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--panel)]">
       <div className="grid gap-6 p-6 md:grid-cols-[1.2fr_1fr] md:p-8">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
@@ -44,12 +80,12 @@ export function NewsletterForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@company.com"
-            className="h-11 rounded-lg border border-[var(--border)] bg-transparent px-3 text-sm outline-none focus:border-accent"
+            className="h-11 rounded-full border border-[var(--border)] bg-transparent px-4 text-sm outline-none focus:border-ink-900 dark:focus:border-white"
           />
           <button
             type="submit"
             disabled={status === 'loading'}
-            className="h-11 rounded-lg bg-accent px-4 text-sm font-medium text-white transition hover:bg-accent-deep disabled:opacity-60"
+            className="h-11 rounded-full bg-ink-900 px-4 text-sm font-medium text-white transition hover:bg-ink-800 disabled:opacity-60 dark:bg-white dark:text-ink-900"
           >
             {status === 'loading' ? 'Subscribing…' : 'Subscribe'}
           </button>

@@ -3,23 +3,24 @@
 @tailwind utilities;
 
 :root {
-  --background: #f6f7f9;
-  --foreground: #101113;
+  --background: #ffffff;
+  --foreground: #242424;
   --panel: #ffffff;
-  --border: #e5e7eb;
-  --muted: #6b7280;
+  --border: #f2f2f2;
+  --muted: #6b6b6b;
 }
 
 .dark {
-  --background: #08090a;
+  --background: #0f1115;
   --foreground: #e8eaed;
-  --panel: #101113;
-  --border: #1e2126;
+  --panel: #151820;
+  --border: #2a2f36;
   --muted: #9ca3af;
 }
 
 html {
   scroll-behavior: smooth;
+  scrollbar-gutter: auto;
 }
 
 body {
@@ -27,15 +28,24 @@ body {
   background: var(--background);
   font-family: var(--font-sans), system-ui, sans-serif;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
-.dark body {
-  background-image:
-    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59, 130, 246, 0.12), transparent),
-    linear-gradient(180deg, #08090a 0%, #0c0d10 100%);
+/* Keep page scroll, hide decorative nested scroll rails */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 ::selection {
+  background: rgba(36, 36, 36, 0.12);
+}
+
+.dark ::selection {
   background: rgba(59, 130, 246, 0.35);
 }
 

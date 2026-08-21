@@ -61,9 +61,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   };
 
   return (
-    <article className="container-editorial py-10 md:py-14">
+    <article className="pb-16 pt-6">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <div className="mx-auto max-w-3xl">
+      <div>
         <div className="mb-4 flex flex-wrap items-center gap-2">
           {article.isBreaking && <BreakingBadge />}
           <SeverityBadge severity={article.severity} />
@@ -180,7 +180,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           <h2 className="mb-5 font-display text-2xl text-ink-900 dark:text-white">
             Related Security News
           </h2>
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid items-stretch gap-4 md:grid-cols-3">
             {related.map((a) => (
               <ArticleCardView key={a._id} article={a} />
             ))}

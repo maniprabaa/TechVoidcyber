@@ -31,7 +31,7 @@ export default async function ThreatActorPage({
   const { actor, related } = payload;
 
   return (
-    <div className="container-editorial py-10 md:py-14">
+    <div className="pb-16 pt-6">
       <div className="mx-auto max-w-3xl">
         <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
           Attribution: {actor.attributionConfidence || 'reported'}
@@ -62,7 +62,7 @@ export default async function ThreatActorPage({
       </div>
       <section className="mx-auto mt-12 max-w-5xl">
         <h2 className="mb-4 font-display text-2xl">Related Articles</h2>
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid items-stretch gap-4 md:grid-cols-3">
           {related.map((a) => (
             <ArticleCardView key={a._id} article={a} />
           ))}

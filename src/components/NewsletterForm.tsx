@@ -3,6 +3,7 @@
 import { FormEvent, useState } from 'react';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
+import { TextDots } from '@/components/loading-ui/text-dots';
 
 export function NewsletterForm({ compact = false }: { compact?: boolean }) {
   const [email, setEmail] = useState('');
@@ -46,7 +47,7 @@ export function NewsletterForm({ compact = false }: { compact?: boolean }) {
             disabled={status === 'loading'}
             className="h-10 w-full rounded-full bg-ink-900 text-sm font-medium text-white transition hover:bg-ink-800 disabled:opacity-60 dark:bg-white dark:text-ink-900"
           >
-            {status === 'loading' ? 'Subscribing…' : 'Subscribe'}
+            {status === 'loading' ? <TextDots>Subscribing</TextDots> : 'Subscribe'}
           </button>
           {message && (
             <p className={cn('text-xs', status === 'error' ? 'text-critical' : 'text-ink-400')}>
@@ -87,7 +88,7 @@ export function NewsletterForm({ compact = false }: { compact?: boolean }) {
             disabled={status === 'loading'}
             className="h-11 rounded-full bg-ink-900 px-4 text-sm font-medium text-white transition hover:bg-ink-800 disabled:opacity-60 dark:bg-white dark:text-ink-900"
           >
-            {status === 'loading' ? 'Subscribing…' : 'Subscribe'}
+            {status === 'loading' ? <TextDots>Subscribing</TextDots> : 'Subscribe'}
           </button>
           {message && (
             <p className={`text-xs ${status === 'error' ? 'text-critical' : 'text-ink-400'}`}>

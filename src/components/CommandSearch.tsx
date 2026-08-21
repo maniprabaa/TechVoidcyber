@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Search, X } from 'lucide-react';
 import { api } from '@/lib/api';
+import { TextDots } from '@/components/loading-ui/text-dots';
 
 interface SearchResult {
   articles: Array<{ _id: string; title: string; slug: string; category: string }>;
@@ -86,7 +87,11 @@ export function CommandSearch({ open, onClose }: { open: boolean; onClose: () =>
           </button>
         </div>
         <div className="max-h-[50vh] overflow-y-auto p-2">
-          {loading && <p className="px-3 py-4 text-sm text-ink-400">Searching…</p>}
+          {loading && (
+            <p className="px-3 py-4 text-sm text-ink-400">
+              <TextDots>Searching</TextDots>
+            </p>
+          )}
           {!loading && q && empty && (
             <p className="px-3 py-4 text-sm text-ink-400">No cybersecurity results found.</p>
           )}

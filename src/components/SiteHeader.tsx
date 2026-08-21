@@ -79,13 +79,12 @@ export function SiteHeader({ onOpenSearch }: { onOpenSearch: () => void }) {
           >
             <Bell className="h-5 w-5" />
           </button>
-          <Link
-            href="/admin"
+          <span
             className="ml-1 flex h-8 w-8 items-center justify-center rounded-full bg-accent text-xs font-bold text-white"
-            aria-label="Profile"
+            aria-hidden="true"
           >
             CI
-          </Link>
+          </span>
           <button
             type="button"
             className="rounded-full p-2 text-ink-500 lg:hidden"
